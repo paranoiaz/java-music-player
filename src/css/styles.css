@@ -1,0 +1,231 @@
+#root_pane {
+    -fx-background-image: url("/resources/background.png");
+    -fx-background-size: cover;
+}
+
+#bottom_pane {
+    -fx-background-color: #061732;
+    -fx-background-size: cover;
+}
+
+#left_pane {
+    -fx-background-image: url("/resources/songinfo.png");
+    -fx-background-size: cover;
+    -fx-opacity: 1;
+}
+
+#left_pane:hover {
+    -fx-opacity: 0.9;
+}
+
+#left_pane_clicked {
+    -fx-background-image: url("/resources/songinfo.png");
+    -fx-background-size: cover;
+    -fx-opacity: 0.1;
+}
+
+#left_pane_clicked:hover {
+    -fx-opacity: 0.2;
+}
+
+#duration_slider {
+    -fx-control-inner-background: #a9cbff;
+}
+
+.slider .thumb {
+    -fx-background-color: #6699cc;
+}
+
+.slider:hover .thumb {
+    -fx-background-color: #89b9e8;
+    -fx-effect: dropshadow(gaussian, #000000, 1, 0.1, 0, 0);
+}
+
+#volume_slider {
+    -fx-control-inner-background: #a9cbff;
+}
+
+#time_text {
+    -fx-font-size: 12pt;
+    -fx-text-fill: #fbeee4;
+}
+
+#skip_backward {
+    -fx-background-image: url("/resources/skipbackward.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 30px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+#skip_backward:hover {
+    -fx-background-image: url("/resources/skipbackwardhover.png");
+}
+
+#skip_forward {
+    -fx-background-image: url("/resources/skipforward.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 30px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+#skip_forward:hover {
+    -fx-background-image: url("/resources/skipforwardhover.png");
+}
+
+#audio_on {
+    -fx-background-image: url("/resources/onaudio.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 25px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+#audio_on:hover {
+    -fx-background-image: url("/resources/onaudiohover.png");
+}
+
+#audio_off {
+    -fx-background-image: url("/resources/offaudio.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 25px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+#audio_off:hover {
+    -fx-background-image: url("/resources/offaudiohover.png");
+}
+
+#repeat_off {
+    -fx-background-image: url("/resources/repeatoff.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 30px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+#repeat_off:hover {
+    -fx-background-image: url("/resources/repeatoffhover.png");
+}
+
+#repeat_on {
+    -fx-background-image: url("/resources/repeaton.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 30px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+#repeat_on:hover {
+    -fx-background-image: url("/resources/repeatonhover.png");
+}
+
+#shuffle_off {
+    -fx-background-image: url("/resources/shuffleoff.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 30px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+#shuffle_off:hover {
+    -fx-background-image: url("/resources/shuffleoffhover.png");
+}
+
+#shuffle_on {
+    -fx-background-image: url("/resources/shuffleon.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 30px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+#shuffle_on:hover {
+    -fx-background-image: url("/resources/shuffleonhover.png");
+}
+
+#play {
+    -fx-background-image: url("/resources/play.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 40px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+#play:hover {
+    -fx-background-image: url("/resources/playhover.png");
+}
+
+#pause {
+    -fx-background-image: url("/resources/pause.png");
+    -fx-background-color: transparent;
+    -fx-background-size: 40px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+#pause:hover {
+    -fx-background-image: url("/resources/pausehover.png");
+}
+
+.list-view {
+    -fx-background-insets: 0;
+    -fx-padding: -20;
+    -fx-background-color: #073173;
+}
+
+.list-view .scroll-bar:horizontal {
+    -fx-scale-x: 0;
+}
+
+.list-view .scroll-bar:vertical {
+    -fx-background-color: #a9cbff;
+}
+
+.list-cell {
+    -fx-background-image: url("/resources/songbar.png");
+    -fx-background-size: stretch;
+    -fx-text-fill: #fbeee4;
+    -fx-font-size: 12pt;
+    -fx-font-weight: 400;
+    -fx-font-family: "Fantasy";
+    -fx-padding: 10px;
+}
+
+.list-cell:selected {
+    -fx-background-image: url("/resources/songbarselected.png");
+    -fx-background-size: stretch;
+}
+
+#line_left {
+    -fx-stroke: white;
+    -fx-stroke-width: 2px;
+}
+
+#line_right {
+    -fx-stroke: white;
+    -fx-stroke-width: 2px;
+}
+
+#playlist_name {
+    -fx-text-fill: #fbeee4;
+    -fx-font-size: 15pt;
+    -fx-font-weight: 800;
+    -fx-font-family: "Fantasy";
+}
+
+#song_name {
+    -fx-text-fill: #fbeee4;
+    -fx-font-size: 12pt;
+    -fx-font-weight: 700;
+    -fx-font-family: "Fantasy";
+}
+
+#now_playing {
+    -fx-text-fill: #fbeee4;
+    -fx-font-size: 12pt;
+    -fx-font-weight: 700;
+    -fx-font-family: "Fantasy";
+}
