@@ -74,7 +74,7 @@ public class GUI extends Application {
 
         this.audioPlayer = new AudioPlayer();
         this.renderPlaySkipButtons();
-        this.setupSlider();
+        this.renderDurationSlider();
         this.renderRepeatShuffleButtons();
         this.setupAudioButton();
         this.setupVolumeSlider();
@@ -199,14 +199,7 @@ public class GUI extends Application {
         });
     }
 
-    private void refreshSlider() {
-        this.bottomPane.getChildren().remove(durationSlider);
-        this.bottomPane.getChildren().remove(this.currentTimeText);
-        this.bottomPane.getChildren().remove(this.totalTimeText);
-        this.setupSlider();
-    }
-
-    private void setupSlider() {
+    private void renderDurationSlider() {
         this.durationSlider = new Slider();
         this.durationSlider.setId("duration_slider");
 
@@ -216,19 +209,41 @@ public class GUI extends Application {
         this.durationSlider.setMaxWidth(300);
         this.durationSlider.setMin(0);
         this.durationSlider.setMax(100);
-        this.durationSlider.setValue(0);
 
         this.currentTimeText = new Label("0:00");
-        this.totalTimeText = new Label("0:00");
         this.currentTimeText.setId("time_text");
-        this.totalTimeText.setId("time_text");
         this.currentTimeText.setTranslateX(30);
-        this.totalTimeText.setTranslateX(20);
         this.currentTimeText.setTranslateY(25);
+
+        this.totalTimeText = new Label("0:00");
+        this.totalTimeText.setId("time_text");
+        this.totalTimeText.setTranslateX(20);
         this.totalTimeText.setTranslateY(25);
 
+        // change song timestamp using the slider
+        this.durationSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number newSliderValue) {
+                double newTime = newSliderValue.doubleValue() / 100 * audioPlayer.getSongDuration().toSeconds();
+                // makes sure the value gets updated every second instead of every millisecond
+                if (newTime > audioPlayer.getSongTimestamp().toSeconds() + 1 || newTime < audioPlayer.getSongTimestamp().toSeconds() - 1) {
+                    audioPlayer.mediaPlayer.pause();
+                    audioPlayer.mediaPlayer.seek(Duration.seconds(newTime));
+                }
+            }
+        });
 
-        audioPlayer.mediaPlayer.currentTimeProperty().addListener(new ChangeListener<Duration>() {
+        // stops song from playing while slider is being dragged
+        this.durationSlider.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (!durationSlider.isPressed() && audioPlayer.clickedState) {
+                    audioPlayer.mediaPlayer.play();
+                }
+            }
+        });
+
+        this.audioPlayer.mediaPlayer.currentTimeProperty().addListener(new ChangeListener<Duration>() {
             @Override
             public void changed(ObservableValue<? extends Duration> observableValue, Duration duration, Duration t1) {
                 double currentTime = audioPlayer.getSongTimestamp().toSeconds();
@@ -242,64 +257,15 @@ public class GUI extends Application {
                 double totalMinutes = audioPlayer.getSongDuration().toSeconds() / 60;
                 double totalSeconds = audioPlayer.getSongDuration().toSeconds() % 60;
                 totalTimeText.setText(String.format("%d:%02d", (int) totalMinutes, (int) totalSeconds));
-                // idk if 0.999 value is correct
+
+                // sometimes it reaches 1, sometimes it doesn't
                 if (currentTime / totalTime >= 0.999) {
                     if (audioPlayer.repeatState) {
                         audioPlayer.mediaPlayer.seek(Duration.seconds(0));
                     }
                     else if (audioPlayer.songCounter >= 0 && audioPlayer.songCounter < audioPlayer.songList.size() - 1) {
-                        if (audioPlayer.shuffleState) {
-                            Random randomGenerator = new Random();
-                            int newSongCounter = audioPlayer.songCounter;
-                            while (newSongCounter == audioPlayer.songCounter) {
-                                newSongCounter = randomGenerator.nextInt(audioPlayer.songList.size());
-                            }
-                            audioPlayer.songCounter = newSongCounter;
-                        }
-                        else {
-                            audioPlayer.songCounter++;
-                        }
-                        audioPlayer.mediaPlayer.stop();
-                        audioPlayer.mediaPlayer = new MediaPlayer(audioPlayer.songList.get(audioPlayer.songCounter));
-                        songListView.getSelectionModel().select(audioPlayer.songCounter);
-                        songNameText.setText(audioPlayer.playlist.getSongList().get(audioPlayer.songCounter).getSongName());
-                        if (audioPlayer.muteState) {
-                            audioPlayer.mediaPlayer.setVolume(0);
-                            volumeSlider.setValue(0);
-                        }
-                        else {
-                            audioPlayer.mediaPlayer.setVolume(audioPlayer.currentVolume);
-                            volumeSlider.setValue(audioPlayer.currentVolume);
-                        }
-                        refreshSlider();
-                        if (!audioPlayer.clickedState) {
-                            audioPlayer.playSong();
-                            playButton.setId("pause");
-                        }
-                        else {
-                            audioPlayer.mediaPlayer.play();
-                        }
+                        changeCurrentSong(true);
                     }
-                }
-            }
-        });
-
-        this.durationSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number newSliderValue) {
-                double newTime = newSliderValue.doubleValue() / 100 * audioPlayer.getSongDuration().toSeconds();
-                if (newTime > audioPlayer.getSongTimestamp().toSeconds() + 1 || newTime < audioPlayer.getSongTimestamp().toSeconds() - 1) {
-                    audioPlayer.mediaPlayer.pause();
-                    audioPlayer.mediaPlayer.seek(Duration.seconds(newTime));
-                }
-            }
-        });
-
-        this.durationSlider.setOnMouseReleased(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if (!durationSlider.isPressed() && audioPlayer.clickedState) {
-                    audioPlayer.mediaPlayer.play();
                 }
             }
         });
@@ -416,7 +382,7 @@ public class GUI extends Application {
                         audioPlayer.mediaPlayer.setVolume(audioPlayer.currentVolume);
                         volumeSlider.setValue(audioPlayer.currentVolume);
                     }
-                    refreshSlider();
+                    refreshDurationSlider();
                     if (!audioPlayer.clickedState) {
                         audioPlayer.playSong();
                         playButton.setId("pause");
@@ -534,6 +500,14 @@ public class GUI extends Application {
             this.audioPlayer.mediaPlayer.play();
         }
 
-        this.refreshSlider();
+        this.refreshDurationSlider();
+    }
+
+    // used to render the duration slider again
+    private void refreshDurationSlider() {
+        this.bottomPane.getChildren().remove(this.durationSlider);
+        this.bottomPane.getChildren().remove(this.currentTimeText);
+        this.bottomPane.getChildren().remove(this.totalTimeText);
+        this.renderDurationSlider();
     }
 }
