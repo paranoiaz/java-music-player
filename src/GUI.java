@@ -78,7 +78,7 @@ public class GUI extends Application {
         this.renderRepeatShuffleButtons();
         this.renderAudioButton();
         this.renderVolumeSlider();
-        this.setupSongListView();
+        this.renderSongViewer();
         this.setupCurrentlyPlaying();
 
         this.window.setResizable(false);
@@ -330,7 +330,7 @@ public class GUI extends Application {
                     audioPlayer.currentVolume = newVolume.doubleValue();
                     audioPlayer.mediaPlayer.setVolume(audioPlayer.currentVolume);
                 }
-                
+
                 toggleAudioButton(audioPlayer.muteState);
             }
         });
@@ -338,7 +338,7 @@ public class GUI extends Application {
         this.bottomPane.getChildren().add(9, this.volumeSlider);
     }
 
-    private void setupSongListView() {
+    private void renderSongViewer() {
         this.songListView = new ListView<String>();
 
         for (Song song: this.audioPlayer.playlist.getSongList()) {
@@ -357,31 +357,13 @@ public class GUI extends Application {
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() >= 2) {
                     int songIndex = songListView.getSelectionModel().getSelectedIndex();
+                    
                     if (songIndex < 0 || songIndex >= audioPlayer.playlist.getSongList().size()) {
                         return;
                     }
 
                     audioPlayer.songCounter = songIndex;
-                    audioPlayer.mediaPlayer.stop();
-                    audioPlayer.mediaPlayer = new MediaPlayer(audioPlayer.songList.get(audioPlayer.songCounter));
-                    songListView.getSelectionModel().select(audioPlayer.songCounter);
-                    songNameText.setText(audioPlayer.playlist.getSongList().get(audioPlayer.songCounter).getSongName());
-                    if (audioPlayer.muteState) {
-                        audioPlayer.mediaPlayer.setVolume(0);
-                        volumeSlider.setValue(0);
-                    }
-                    else {
-                        audioPlayer.mediaPlayer.setVolume(audioPlayer.currentVolume);
-                        volumeSlider.setValue(audioPlayer.currentVolume);
-                    }
-                    refreshDurationSlider();
-                    if (!audioPlayer.clickedState) {
-                        audioPlayer.playSong();
-                        playButton.setId("pause");
-                    }
-                    else {
-                        audioPlayer.mediaPlayer.play();
-                    }
+                    changeCurrentSong(null);
                 }
             }
         });
@@ -447,8 +429,8 @@ public class GUI extends Application {
         this.leftPane.getChildren().add(2, this.songNameText);
     }
 
-    // true is an increment, false is a decrement
-    private void changeCurrentSong(boolean positiveOrNegative) {
+    // true is an increment, false is a decrement, null is neither
+    private void changeCurrentSong(Boolean positiveOrNegative) {
         if (this.audioPlayer.shuffleState) {
             Random randomIntegerGenerator = new Random();
             int newSongCounter = this.audioPlayer.songCounter;
@@ -461,11 +443,12 @@ public class GUI extends Application {
             this.audioPlayer.songCounter = newSongCounter;
         }
         else {
-            if (positiveOrNegative) {
-                this.audioPlayer.songCounter++;
-            }
-            else {
-                this.audioPlayer.songCounter--;
+            if (positiveOrNegative != null) {
+                if (positiveOrNegative) {
+                    this.audioPlayer.songCounter++;
+                } else {
+                    this.audioPlayer.songCounter--;
+                }
             }
         }
 
