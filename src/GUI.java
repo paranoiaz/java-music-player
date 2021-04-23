@@ -76,8 +76,8 @@ public class GUI extends Application {
         this.renderPlaySkipButtons();
         this.renderDurationSlider();
         this.renderRepeatShuffleButtons();
-        this.setupAudioButton();
-        this.setupVolumeSlider();
+        this.renderAudioButton();
+        this.renderVolumeSlider();
         this.setupSongListView();
         this.setupCurrentlyPlaying();
 
@@ -275,7 +275,7 @@ public class GUI extends Application {
         this.bottomPane.getChildren().add(5, this.totalTimeText);
     }
 
-    private void setupAudioButton() {
+    private void renderAudioButton() {
         this.audioButton = new Button();
         this.audioButton.setId("audio_on");
 
@@ -304,16 +304,7 @@ public class GUI extends Application {
         this.bottomPane.getChildren().add(8,  this.audioButton);
     }
 
-    private void toggleAudioButton(boolean state) {
-        if (!state) {
-            audioButton.setId("audio_on");
-        }
-        else {
-            audioButton.setId("audio_off");
-        }
-    }
-
-    private void setupVolumeSlider() {
+    private void renderVolumeSlider() {
         this.volumeSlider = new Slider();
         this.volumeSlider.setId("volume_slider");
 
@@ -329,17 +320,18 @@ public class GUI extends Application {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number newVolume) {
                 audioPlayer.mediaPlayer.setVolume(newVolume.doubleValue());
+
                 if (volumeSlider.getValue() == 0) {
                     audioPlayer.muteState = true;
-                    toggleAudioButton(audioPlayer.muteState);
                     audioPlayer.mediaPlayer.setVolume(0);
                 }
                 else {
                     audioPlayer.muteState = false;
-                    toggleAudioButton(audioPlayer.muteState);
                     audioPlayer.currentVolume = newVolume.doubleValue();
                     audioPlayer.mediaPlayer.setVolume(audioPlayer.currentVolume);
                 }
+                
+                toggleAudioButton(audioPlayer.muteState);
             }
         });
 
@@ -509,5 +501,14 @@ public class GUI extends Application {
         this.bottomPane.getChildren().remove(this.currentTimeText);
         this.bottomPane.getChildren().remove(this.totalTimeText);
         this.renderDurationSlider();
+    }
+
+    private void toggleAudioButton(boolean muteState) {
+        if (!muteState) {
+            audioButton.setId("audio_on");
+        }
+        else {
+            audioButton.setId("audio_off");
+        }
     }
 }
