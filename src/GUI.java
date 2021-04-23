@@ -20,7 +20,6 @@ import java.util.Random;
 
 
 public class GUI extends Application {
-    private AudioPlayer audioPlayer;
     private Stage window;
     private Scene mainScene;
     private BorderPane rootPane;
@@ -28,14 +27,15 @@ public class GUI extends Application {
     private HBox bottomPane;
     private Pane leftPane;
     private Slider durationSlider;
+    private Slider volumeSlider;
+    private Button playButton;
+    private Button audioButton;
+    private ListView<String> songListView;
     private Label currentTimeText;
     private Label totalTimeText;
     private Label songNameText;
     private Label playlistNameText;
-    private Button playButton;
-    private Button audioButton;
-    private Slider volumeSlider;
-    private ListView<String> songListView;
+    private AudioPlayer audioPlayer;
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -70,8 +70,10 @@ public class GUI extends Application {
         this.leftPane.setMaxHeight(150);
         this.leftPane.setMinWidth(150);
         this.leftPane.setMaxWidth(150);
+        this.leftPane.setTranslateY(375);
         this.rootPane.setLeft(this.leftPane);
 
+        // render all components
         this.audioPlayer = new AudioPlayer();
         this.renderPlaySkipButtons();
         this.renderDurationSlider();
@@ -79,7 +81,7 @@ public class GUI extends Application {
         this.renderAudioButton();
         this.renderVolumeSlider();
         this.renderSongViewer();
-        this.setupCurrentlyPlaying();
+        this.renderNowPlaying();
 
         this.window.setResizable(false);
         this.window.show();
@@ -141,8 +143,8 @@ public class GUI extends Application {
         Button skipBackwardButton = new Button();
         Button skipForwardButton = new Button();
 
-        buttonList.add(skipBackwardButton);
         // order matters in the foreach loop
+        buttonList.add(skipBackwardButton);
         buttonList.add(this.playButton);
         buttonList.add(skipForwardButton);
 
@@ -357,7 +359,7 @@ public class GUI extends Application {
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getClickCount() >= 2) {
                     int songIndex = songListView.getSelectionModel().getSelectedIndex();
-                    
+
                     if (songIndex < 0 || songIndex >= audioPlayer.playlist.getSongList().size()) {
                         return;
                     }
@@ -368,32 +370,7 @@ public class GUI extends Application {
             }
         });
 
-        songListView.getSelectionModel().select(audioPlayer.songCounter);
-        this.centerPane.getChildren().add(0, this.songListView);
-    }
-
-    private void setupCurrentlyPlaying() {
-        this.playlistNameText = new Label(audioPlayer.playlist.getPlayListName());
-        this.playlistNameText.setId("playlist_name");
-        this.playlistNameText.setMinSize(135, 30);
-        this.playlistNameText.setMaxSize(135, 30);
-        this.playlistNameText.setTranslateX(10);
-        this.playlistNameText.setTranslateY(10);
-
-        this.songNameText = new Label(audioPlayer.playlist.getSongList().get(audioPlayer.songCounter).getSongName());
-        this.songNameText.setId("song_name");
-        this.songNameText.setMinSize(135, 30);
-        this.songNameText.setMaxSize(135, 30);
-        this.songNameText.setTranslateX(10);
-        this.songNameText.setTranslateY(110);
-
-        Label nowPlaying = new Label("Now playing:");
-        nowPlaying.setId("now_playing");
-        nowPlaying.setMinSize(135, 30);
-        nowPlaying.setMaxSize(135, 30);
-        nowPlaying.setTranslateX(10);
-        nowPlaying.setTranslateY(90);
-
+        // border lines next to the listview
         Line lineLeft = new Line();
         lineLeft.setId("line_left");
         lineLeft.setStartX(150);
@@ -411,6 +388,33 @@ public class GUI extends Application {
         this.rootPane.getChildren().add(lineLeft);
         this.rootPane.getChildren().add(lineRight);
 
+        songListView.getSelectionModel().select(this.audioPlayer.songCounter);
+        this.centerPane.getChildren().add(0, this.songListView);
+    }
+
+    private void renderNowPlaying() {
+        this.playlistNameText = new Label(this.audioPlayer.playlist.getPlayListName());
+        this.playlistNameText.setId("playlist_name");
+        this.playlistNameText.setMinSize(135, 30);
+        this.playlistNameText.setMaxSize(135, 30);
+        this.playlistNameText.setTranslateX(10);
+        this.playlistNameText.setTranslateY(10);
+
+        this.songNameText = new Label(this.audioPlayer.playlist.getSongList().get(this.audioPlayer.songCounter).getSongName());
+        this.songNameText.setId("song_name");
+        this.songNameText.setMinSize(135, 30);
+        this.songNameText.setMaxSize(135, 30);
+        this.songNameText.setTranslateX(10);
+        this.songNameText.setTranslateY(110);
+
+        Label nowPlaying = new Label("Now playing:");
+        nowPlaying.setId("now_playing");
+        nowPlaying.setMinSize(135, 30);
+        nowPlaying.setMaxSize(135, 30);
+        nowPlaying.setTranslateX(10);
+        nowPlaying.setTranslateY(90);
+
+        // ability to hide the component
         this.leftPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -423,7 +427,6 @@ public class GUI extends Application {
             }
         });
 
-        this.leftPane.setTranslateY(375);
         this.leftPane.getChildren().add(0, this.playlistNameText);
         this.leftPane.getChildren().add(1, nowPlaying);
         this.leftPane.getChildren().add(2, this.songNameText);
@@ -488,10 +491,10 @@ public class GUI extends Application {
 
     private void toggleAudioButton(boolean muteState) {
         if (!muteState) {
-            audioButton.setId("audio_on");
+            this.audioButton.setId("audio_on");
         }
         else {
-            audioButton.setId("audio_off");
+            this.audioButton.setId("audio_off");
         }
     }
 }
