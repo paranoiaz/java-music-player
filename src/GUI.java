@@ -72,28 +72,20 @@ public class GUI extends Application {
         this.leftPane.setMaxWidth(150);
         this.rootPane.setLeft(this.leftPane);
 
-        this.window.setResizable(false);
-        this.window.show();
-
         this.audioPlayer = new AudioPlayer();
-        this.setupMediaPlayerButtons();
+        this.renderPlaySkipButtons();
         this.setupSlider();
-        this.setupRepeatAndShuffleButtons();
+        this.renderRepeatShuffleButtons();
         this.setupAudioButton();
         this.setupVolumeSlider();
         this.setupSongListView();
         this.setupCurrentlyPlaying();
-        songListView.getSelectionModel().select(audioPlayer.songCounter);
 
-        this.rootPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                songListView.getSelectionModel().select(-1);
-            }
-        });
+        this.window.setResizable(false);
+        this.window.show();
     }
 
-    private void setupRepeatAndShuffleButtons() {
+    private void renderRepeatShuffleButtons() {
         Button repeatButton = new Button();
         Button shuffleButton = new Button();
 
@@ -142,19 +134,21 @@ public class GUI extends Application {
         this.bottomPane.getChildren().add(7, shuffleButton);
     }
 
-    private void setupMediaPlayerButtons() {
+    private void renderPlaySkipButtons() {
+        // arraylist used to avoid repetition
         ArrayList<Button> buttonList = new ArrayList<Button>();
+        this.playButton = new Button();
         Button skipBackwardButton = new Button();
         Button skipForwardButton = new Button();
-        this.playButton = new Button();
 
         buttonList.add(skipBackwardButton);
+        // order matters in the foreach loop
         buttonList.add(this.playButton);
         buttonList.add(skipForwardButton);
 
+        this.playButton.setId("play");
         skipBackwardButton.setId("skip_backward");
         skipForwardButton.setId("skip_forward");
-        this.playButton.setId("play");
 
         int indexCounter = 0;
         for (Button button: buttonList) {
@@ -167,13 +161,7 @@ public class GUI extends Application {
             indexCounter++;
         }
 
-        this.playAndPauseMusicSetup(this.playButton);
-        this.skipForwardAndBackwardSetup(skipBackwardButton);
-        this.skipForwardAndBackwardSetup(skipForwardButton);
-    }
-
-    private void playAndPauseMusicSetup(Button playButton) {
-        playButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        this.playButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (audioPlayer.playSong()) {
@@ -184,9 +172,12 @@ public class GUI extends Application {
                 }
             }
         });
+        
+        this.addSkipButtonListener(skipBackwardButton);
+        this.addSkipButtonListener(skipForwardButton);
     }
-
-    private void skipForwardAndBackwardSetup(Button skipButton) {
+    
+    private void addSkipButtonListener(Button skipButton) {
         skipButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -496,6 +487,7 @@ public class GUI extends Application {
             }
         });
 
+        songListView.getSelectionModel().select(audioPlayer.songCounter);
         this.centerPane.getChildren().add(0, this.songListView);
     }
 
