@@ -1,5 +1,5 @@
 # Java Music Player
-A music player with a clean design made in Java using JavaFX for the GUI components.
+A fast music player with a modern design made in Java using JavaFX for the GUI components.
 
 **Dependencies**
 ```
