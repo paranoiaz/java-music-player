@@ -14,8 +14,8 @@ public class AudioPlayer {
     public boolean repeatState = false;
     public boolean shuffleState = false;
     public boolean muteState = false;
-    public int songCounter = 0;
     public double currentVolume = 0.5;
+    public int songCounter = 0;
 
     public AudioPlayer() {
         this.songList = new ArrayList<Media>();
@@ -27,14 +27,6 @@ public class AudioPlayer {
         }
 
         this.mediaPlayer = new MediaPlayer(this.songList.get(songCounter));
-    }
-
-    public Duration getSongTimestamp() {
-        return this.mediaPlayer.getCurrentTime();
-    }
-
-    public Duration getSongDuration() {
-        return this.mediaPlayer.getTotalDuration();
     }
 
     public boolean playSong() {
@@ -49,18 +41,23 @@ public class AudioPlayer {
         return this.clickedState;
     }
 
-    public boolean repeatSong() {
+    public void repeatSong() {
         this.repeatState = !this.repeatState;
-        return this.repeatState;
     }
 
-    public boolean shuffleSong() {
+    public void shuffleSong() {
         this.shuffleState = !this.shuffleState;
-        return this.shuffleState;
     }
 
-    public boolean muteSong() {
+    public void muteSong() {
         this.muteState = !this.muteState;
-        return this.muteState;
+    }
+
+    public Duration getSongTimestamp() {
+        return this.mediaPlayer.getCurrentTime();
+    }
+
+    public Duration getSongDuration() {
+        return this.mediaPlayer.getTotalDuration();
     }
 }
