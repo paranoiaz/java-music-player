@@ -172,11 +172,11 @@ public class GUI extends Application {
                 }
             }
         });
-        
+
         this.addSkipButtonListener(skipBackwardButton);
         this.addSkipButtonListener(skipForwardButton);
     }
-    
+
     private void addSkipButtonListener(Button skipButton) {
         skipButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -186,72 +186,13 @@ public class GUI extends Application {
                         audioPlayer.mediaPlayer.seek(Duration.seconds(0));
                     }
                     else if (audioPlayer.songCounter > 0 && audioPlayer.songCounter < audioPlayer.songList.size()) {
-                        if (audioPlayer.shuffleState) {
-                            Random randomGenerator = new Random();
-                            int newSongCounter = audioPlayer.songCounter;
-                            while (newSongCounter == audioPlayer.songCounter) {
-                                newSongCounter = randomGenerator.nextInt(audioPlayer.songList.size());
-                            }
-                            audioPlayer.songCounter = newSongCounter;
-                        }
-                        else {
-                            audioPlayer.songCounter--;
-                        }
-                        audioPlayer.mediaPlayer.stop();
-                        audioPlayer.mediaPlayer = new MediaPlayer(audioPlayer.songList.get(audioPlayer.songCounter));
-                        songListView.getSelectionModel().select(audioPlayer.songCounter);
-                        songNameText.setText(audioPlayer.playlist.getSongList().get(audioPlayer.songCounter).getSongName());
-                        if (audioPlayer.muteState) {
-                            audioPlayer.mediaPlayer.setVolume(0);
-                            volumeSlider.setValue(0);
-                        }
-                        else {
-                            audioPlayer.mediaPlayer.setVolume(audioPlayer.currentVolume);
-                            volumeSlider.setValue(audioPlayer.currentVolume);
-                        }
-                        refreshSlider();
-                        if (!audioPlayer.clickedState) {
-                            audioPlayer.playSong();
-                            playButton.setId("pause");
-                        }
-                        else {
-                            audioPlayer.mediaPlayer.play();
-                        }
+                        changeCurrentSong(false);
                     }
                 }
+
                 if (skipButton.getId().equalsIgnoreCase("skip_forward")) {
                     if (audioPlayer.songCounter >= 0 && audioPlayer.songCounter < audioPlayer.songList.size() - 1) {
-                        if (audioPlayer.shuffleState) {
-                            Random randomGenerator = new Random();
-                            int newSongCounter = audioPlayer.songCounter;
-                            while (newSongCounter == audioPlayer.songCounter) {
-                                newSongCounter = randomGenerator.nextInt(audioPlayer.songList.size());
-                            }
-                            audioPlayer.songCounter = newSongCounter;
-                        }
-                        else {
-                            audioPlayer.songCounter++;
-                        }
-                        audioPlayer.mediaPlayer.stop();
-                        audioPlayer.mediaPlayer = new MediaPlayer(audioPlayer.songList.get(audioPlayer.songCounter));
-                        songListView.getSelectionModel().select(audioPlayer.songCounter);
-                        songNameText.setText(audioPlayer.playlist.getSongList().get(audioPlayer.songCounter).getSongName());
-                        if (audioPlayer.muteState) {
-                            audioPlayer.mediaPlayer.setVolume(0);
-                            volumeSlider.setValue(0);
-                        }
-                        else {
-                            audioPlayer.mediaPlayer.setVolume(audioPlayer.currentVolume);
-                            volumeSlider.setValue(audioPlayer.currentVolume);
-                        }
-                        refreshSlider();
-                        if (!audioPlayer.clickedState) {
-                            audioPlayer.playSong();
-                            playButton.setId("pause");
-                        }
-                        else {
-                            audioPlayer.mediaPlayer.play();
-                        }
+                        changeCurrentSong(true);
                     }
                 }
             }
@@ -546,5 +487,53 @@ public class GUI extends Application {
         this.leftPane.getChildren().add(0, this.playlistNameText);
         this.leftPane.getChildren().add(1, nowPlaying);
         this.leftPane.getChildren().add(2, this.songNameText);
+    }
+
+    // true is an increment, false is a decrement
+    private void changeCurrentSong(boolean positiveOrNegative) {
+        if (this.audioPlayer.shuffleState) {
+            Random randomIntegerGenerator = new Random();
+            int newSongCounter = this.audioPlayer.songCounter;
+
+            // generate random song counter that is not equal to current
+            while (newSongCounter == this.audioPlayer.songCounter) {
+                newSongCounter = randomIntegerGenerator.nextInt(this.audioPlayer.songList.size());
+            }
+
+            this.audioPlayer.songCounter = newSongCounter;
+        }
+        else {
+            if (positiveOrNegative) {
+                this.audioPlayer.songCounter++;
+            }
+            else {
+                this.audioPlayer.songCounter--;
+            }
+        }
+
+        // change current song by initializing a new object
+        this.audioPlayer.mediaPlayer.stop();
+        this.audioPlayer.mediaPlayer = new MediaPlayer(this.audioPlayer.songList.get(this.audioPlayer.songCounter));
+        this.songListView.getSelectionModel().select(this.audioPlayer.songCounter);
+        this.songNameText.setText(this.audioPlayer.playlist.getSongList().get(this.audioPlayer.songCounter).getSongName());
+
+        if (this.audioPlayer.muteState) {
+            this.audioPlayer.mediaPlayer.setVolume(0);
+            this.volumeSlider.setValue(0);
+        }
+        else {
+            this.audioPlayer.mediaPlayer.setVolume(this.audioPlayer.currentVolume);
+            this.volumeSlider.setValue(this.audioPlayer.currentVolume);
+        }
+
+        if (!this.audioPlayer.clickedState) {
+            this.audioPlayer.playSong();
+            this.playButton.setId("pause");
+        }
+        else {
+            this.audioPlayer.mediaPlayer.play();
+        }
+
+        this.refreshSlider();
     }
 }
