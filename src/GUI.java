@@ -50,7 +50,7 @@ public class GUI extends Application {
         this.centerPane = new VBox();
         this.leftPane = new Pane();
 
-        this.window.setTitle("Music Player developed by github.com/paranoiaz");
+        this.window.setTitle("Music Player");
         this.window.setScene(this.mainScene);
 
         this.rootPane.setId("root_pane");
@@ -188,13 +188,13 @@ public class GUI extends Application {
                         audioPlayer.mediaPlayer.seek(Duration.seconds(0));
                     }
                     else if (audioPlayer.songCounter > 0 && audioPlayer.songCounter < audioPlayer.songList.size()) {
-                        changeCurrentSong(false);
+                        changeCurrentSong(false, false);
                     }
                 }
 
                 if (skipButton.getId().equalsIgnoreCase("skip_forward")) {
                     if (audioPlayer.songCounter >= 0 && audioPlayer.songCounter < audioPlayer.songList.size() - 1) {
-                        changeCurrentSong(true);
+                        changeCurrentSong(true, false);
                     }
                 }
             }
@@ -266,7 +266,7 @@ public class GUI extends Application {
                         audioPlayer.mediaPlayer.seek(Duration.seconds(0));
                     }
                     else if (audioPlayer.songCounter >= 0 && audioPlayer.songCounter < audioPlayer.songList.size() - 1) {
-                        changeCurrentSong(true);
+                        changeCurrentSong(true, false);
                     }
                 }
             }
@@ -349,8 +349,8 @@ public class GUI extends Application {
 
         this.songListView.setMinWidth(500);
         this.songListView.setMaxWidth(500);
-        this.songListView.setMinHeight(525);
-        this.songListView.setMaxHeight(525);
+        this.songListView.setMinHeight(490);
+        this.songListView.setMaxHeight(490);
         this.songListView.setTranslateX(20);
         this.songListView.setTranslateY(20);
 
@@ -365,7 +365,7 @@ public class GUI extends Application {
                     }
 
                     audioPlayer.songCounter = songIndex;
-                    changeCurrentSong(null);
+                    changeCurrentSong(null, true);
                 }
             }
         });
@@ -433,8 +433,8 @@ public class GUI extends Application {
     }
 
     // true is an increment, false is a decrement, null is neither
-    private void changeCurrentSong(Boolean positiveOrNegative) {
-        if (this.audioPlayer.shuffleState) {
+    private void changeCurrentSong(Boolean positiveOrNegative, Boolean clickedSwitch) {
+        if (this.audioPlayer.shuffleState && !clickedSwitch) {
             Random randomIntegerGenerator = new Random();
             int newSongCounter = this.audioPlayer.songCounter;
 
