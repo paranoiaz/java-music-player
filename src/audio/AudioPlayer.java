@@ -20,7 +20,7 @@ public class AudioPlayer {
     public AudioPlayer() {
         this.songList = new ArrayList<Media>();
         // provide a valid path to the directory with audio files
-        this.playlist = new Playlist("Music Playlist", "src/song");
+        this.playlist = new Playlist("", "");
 
         for (Song song: playlist.getSongList()) {
             this.songList.add(new Media(song.getSongFile().toURI().toString()));
